@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  remote_user: root
+  vars:
+    deployssl_pem_cert_src: /tmp/cert.ctr
+    deployssl_pem_pkey_src: /tmp/pkey.test.pem
+    deployssl_pem_cert_trgt: /tmp/cert.pem
+    deployssl_pem_pkey_trgt: /tmp/pkey.pem
+  roles:
+    - deploy-ssl-certificate

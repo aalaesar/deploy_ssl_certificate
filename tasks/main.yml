@@ -1,0 +1,57 @@
+---
+# tasks file for deploy-ssl-certificate
+- name: Subjects check
+  block:
+  - name: get infos from current certificate
+    community.crypto.x509_certificate_info:
+      path: "{{ deployssl_pem_cert_trgt }}"
+    register: __current_cert
+  - name: The replacement certificate should have at least the same subject(s)
+    ansible.builtin.assert:
+      that:
+        -  not __certs_subject_difference
+      fail_msg: "New cert will NOT serve for the following domains: {{ __certs_subject_difference| join(',') }}"
+    vars:
+      __new_cert_infos: "{{ __deployssl_cert_content[0] | community.crypto.x509_certificate_info }}"
+      __certs_subject_difference: "{{ __current_cert.subject_alt_name | difference(__new_cert_infos.subject_alt_name) }}"
+  when: not deployssl_force_deploy
+
+- name: copy over the pem file
+  ansible.builtin.copy:
+    dest: "{{ deployssl_pem_cert_trgt }}"
+    content: "{{ deployssl_split_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
+    backup: True
+- name : copy over the pkey file
+  ansible.builtin.copy:
+    dest: "{{ deployssl_pem_pkey_trgt }}"
+    content: "{{ __deployssl_pkey_content }}"
+    backup: True
+  # no_log: True
+
+- name: create the pem chain file
+  ansible.builtin.copy:
+    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
+    content: |
+      {% for elem in  __deployssl_chain_content %}{{ elem }}
+      {% endfor %}
+    backup: True
+  vars:
+    __chain_file_name: "{{ (deployssl_pem_cert_trgt| basename| split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
+  when:
+    - deployssl_split_fullchain
+    - __deployssl_chain_content| length > 0
+
+- name: create the fullchain file
+  ansible.builtin.copy:
+    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
+    content: |
+      {{ __deployssl_cert_content_unsafe }}
+      {% for elem in __deployssl_chain_content %}{{ elem }}
+      {% endfor %}
+    backup: True
+  vars:
+    __fullchain_file_name: "{{ (deployssl_pem_cert_trgt| basename| split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
+  when:
+    - deployssl_create_fullchain
+    - __deployssl_chain_content|length > 0
+    - __deployssl_cert_content|length == 1

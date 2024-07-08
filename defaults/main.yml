@@ -1,0 +1,26 @@
+---
+# defaults file for deploy-ssl-certificate
+
+# you can either source content as file or as string
+deployssl_pem_type: file # or 'content'
+# where the certificate is located on the
+# ansible host
+deployssl_pem_cert_src: /tmp/cert.pem
+deployssl_pem_pkey_src: /tmp/pkey.pem
+deployssl_pem_chain_src: ""
+
+# where the certificat files should be put on the target
+deployssl_create_fullchain: False
+deployssl_split_fullchain: True
+
+# chain and fullchain pem files will go is the same folder as the cert
+deployssl_pem_cert_trgt: /etc/ssl/certs/cert.pem
+deployssl_pem_pkey_trgt: /etc/ssl/private/pkey.pem
+
+# services that should reload or restart
+# once the certificate have been installed
+deployssl_affected_svc: []
+deployssl_restart_affected_svc: False
+
+# will skip the minimum subject check between the certs
+deployssl_force_deploy: False
