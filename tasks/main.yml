@@ -1,6 +1,15 @@
 ---
 # tasks file for deploy-ssl-certificate
-- name: Subjects check
+- name: the certificat and the pkey must be related
+  ansible.builtin.assert:
+    that:
+      - cert_pubkey_fingerprint == pkey_pubkey_fingerprint
+    fail_msg: "Provided cert and pkey are not matching."
+  vars:
+    cert_pubkey_fingerprint: "{{ (__deployssl_cert_content[0] | community.crypto.x509_certificate_info).public_key_fingerprints.sha512 }}"
+    pkey_pubkey_fingerprint: "{{ (__deployssl_pkey_content | community.crypto.openssl_privatekey_info).public_key_fingerprints.sha512 }}"
+
+- name: Certificat checks
   block:
   - name: get infos from current certificate
     community.crypto.x509_certificate_info:
