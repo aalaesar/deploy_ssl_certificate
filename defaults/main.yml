@@ -13,7 +13,7 @@ deployssl_pem_chain_src: ""
 deployssl_create_fullchain: False
 deployssl_split_fullchain: True
 
-# chain and fullchain pem files will go is the same folder as the cert
+# NOTE: chain and fullchain pem files will go in the same folder as the cert
 deployssl_pem_cert_trgt: /etc/ssl/certs/cert.pem
 deployssl_pem_pkey_trgt: /etc/ssl/private/pkey.pem
 
