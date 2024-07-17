@@ -1,2 +1,14 @@
 ---
 # handlers file for deploy-ssl-certificate
+
+- name: reload affected services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: reloaded
+  loop: "{{ deployssl_reload_svc }}"
+
+- name: restart affected services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop: "{{ deployssl_restart_svc }}"

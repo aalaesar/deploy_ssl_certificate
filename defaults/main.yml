@@ -19,8 +19,8 @@ deployssl_pem_pkey_trgt: /etc/ssl/private/pkey.pem
 
 # services that should reload or restart
 # once the certificate have been installed
-deployssl_affected_svc: []
-deployssl_restart_affected_svc: False
+deployssl_reload_svc: []
+deployssl_restart_svc: []
 
 # will skip the minimum subject check between the certs
 deployssl_force_deploy: False
