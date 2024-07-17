@@ -9,6 +9,12 @@
     cert_pubkey_fingerprint: "{{ (__deployssl_cert_content[0] | community.crypto.x509_certificate_info).public_key_fingerprints.sha512 }}"
     pkey_pubkey_fingerprint: "{{ (__deployssl_pkey_content | community.crypto.openssl_privatekey_info).public_key_fingerprints.sha512 }}"
 
+- name: check if cert will be replaced
+  ansible.builtin.stat:
+    path: "{{ deployssl_pem_cert_trgt }}"
+    follow: True
+  register: __current_cert_stat
+
 - name: Certificat checks
   block:
   - name: get infos from current certificate
@@ -23,7 +29,9 @@
     vars:
       __new_cert_infos: "{{ __deployssl_cert_content[0] | community.crypto.x509_certificate_info }}"
       __certs_subject_difference: "{{ __current_cert.subject_alt_name | difference(__new_cert_infos.subject_alt_name) }}"
-  when: not deployssl_force_deploy
+  when:
+    - __current_cert_stat.stat.exists
+    - not deployssl_force_deploy
 
 - name: copy over the pem file
   ansible.builtin.copy:
