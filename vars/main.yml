@@ -3,28 +3,27 @@
 
 # load cert as "unsafe" string as it can contain multiple pem entries
 # in case it's a fullchain.
-__deployssl_cert_content_unsafe: "{{ ( deployssl_pem_type == 'file' ) | ternary(
+__deployssl_cert_content_unsafe: "{{ (deployssl_pem_type == 'file') | ternary(
   lookup('file', deployssl_pem_cert_src),
-  deployssl_pem_cert_src ) }}"
+  deployssl_pem_cert_src) }}"
 
 # assume the source cert file has an extension like '.pem'
-__deployssl_cert_extension: "{{ ( deployssl_pem_type == 'file' ) | ternary(
+__deployssl_cert_extension: "{{ (deployssl_pem_type == 'file') | ternary(
   (deployssl_pem_cert_trgt| basename | split('.'))[-1],
-  'pem' ) }}"
+  'pem') }}"
 # create a list of all pem certs in the file.
 # the "Main" certificat is assumed to be the first element
 __deployssl_cert_content: "{{ __deployssl_cert_content_unsafe | community.crypto.split_pem }}"
 
-__deployssl_pkey_content: "{{ ( deployssl_pem_type == 'file' ) | ternary(
+__deployssl_pkey_content: "{{ (deployssl_pem_type == 'file') | ternary(
   lookup('file', deployssl_pem_pkey_src),
-  deployssl_pem_pkey_src ) }}"
+  deployssl_pem_pkey_src) }}"
 
 # fetch the chain either from file or value BUT is taken over by all the certs
 # in the primary cert file when there is more than one.
-__deployssl_chain_content: "{{ [] if not deployssl_pem_chain_src and __deployssl_cert_content|length == 1 else (
-  __deployssl_cert_content[1:] if __deployssl_cert_content|length > 1 else
-  (
-    (deployssl_pem_type == 'file') | ternary(
+__deployssl_chain_content: "{{ [] if not deployssl_pem_chain_src and __deployssl_cert_content | length == 1 else (
+  __deployssl_cert_content[1:] if __deployssl_cert_content | length > 1 else
+   ((deployssl_pem_type == 'file') | ternary(
       lookup('file', deployssl_pem_chain_src),
       deployssl_pem_chain_src) | community.crypto.split_pem
   )) }}"

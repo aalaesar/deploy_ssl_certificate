@@ -10,8 +10,8 @@ deployssl_pem_pkey_src: /tmp/pkey.pem
 deployssl_pem_chain_src: ""
 
 # where the certificat files should be put on the target
-deployssl_create_fullchain: False
-deployssl_split_fullchain: True
+deployssl_create_fullchain: false
+deployssl_split_fullchain: true
 
 # NOTE: chain and fullchain pem files will go in the same folder as the cert
 deployssl_pem_cert_trgt: /etc/ssl/certs/cert.pem
@@ -23,4 +23,4 @@ deployssl_reload_svc: []
 deployssl_restart_svc: []
 
 # will skip the minimum subject check between the certs
-deployssl_force_deploy: False
+deployssl_force_deploy: false

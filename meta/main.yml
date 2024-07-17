@@ -1,4 +1,6 @@
 galaxy_info:
+  role_name: deploy_ssl_certificate
+  namespace: aalaesar
   author: Marc Crébassa
   license: BSD-3-Clause
   min_ansible_version: 2.1

@@ -1,6 +1,6 @@
 ---
 # tasks file for deploy-ssl-certificate
-- name: the certificat and the pkey must be related
+- name: The certificat and the pkey must be related
   ansible.builtin.assert:
     that:
       - cert_pubkey_fingerprint == pkey_pubkey_fingerprint
@@ -9,73 +9,77 @@
     cert_pubkey_fingerprint: "{{ (__deployssl_cert_content[0] | community.crypto.x509_certificate_info).public_key_fingerprints.sha512 }}"
     pkey_pubkey_fingerprint: "{{ (__deployssl_pkey_content | community.crypto.openssl_privatekey_info).public_key_fingerprints.sha512 }}"
 
-- name: check if cert will be replaced
+- name: Check if cert will be replaced
   ansible.builtin.stat:
     path: "{{ deployssl_pem_cert_trgt }}"
-    follow: True
+    follow: true
   register: __current_cert_stat
 
 - name: Certificat checks
-  block:
-  - name: get infos from current certificate
-    community.crypto.x509_certificate_info:
-      path: "{{ deployssl_pem_cert_trgt }}"
-    register: __current_cert
-  - name: The replacement certificate should have at least the same subject(s)
-    ansible.builtin.assert:
-      that:
-        -  not __certs_subject_difference
-      fail_msg: "New cert will NOT serve for the following domains: {{ __certs_subject_difference| join(',') }}"
-    vars:
-      __new_cert_infos: "{{ __deployssl_cert_content[0] | community.crypto.x509_certificate_info }}"
-      __certs_subject_difference: "{{ __current_cert.subject_alt_name | difference(__new_cert_infos.subject_alt_name) }}"
   when:
     - __current_cert_stat.stat.exists
     - not deployssl_force_deploy
+  block:
+    - name: Get infos from current certificate
+      community.crypto.x509_certificate_info:
+        path: "{{ deployssl_pem_cert_trgt }}"
+      register: __current_cert
+    - name: The replacement certificate should have at least the same subject(s)
+      ansible.builtin.assert:
+        that:
+          - not __certs_subject_difference
+        fail_msg: "New cert will NOT serve for the following domains: {{ __certs_subject_difference| join(',') }}"
+      vars:
+        __new_cert_infos: "{{ __deployssl_cert_content[0] | community.crypto.x509_certificate_info }}"
+        __certs_subject_difference: "{{ __current_cert.subject_alt_name | difference(__new_cert_infos.subject_alt_name) }}"
 
-- name: copy over the pem file
+- name: Copy over the pem file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_cert_trgt }}"
     content: "{{ deployssl_split_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
-    backup: True
+    backup: true
   notify:
-    - "reload affected services"
-    - "restart affected services"
+    - "Reload affected services"
+    - "Restart affected services"
+  mode: '0644'
 
-- name : copy over the pkey file
+- name: Copy over the pkey file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_pkey_trgt }}"
     content: "{{ __deployssl_pkey_content }}"
-    backup: True
-  # no_log: True
+    backup: true
+  # no_log: true
   notify:
-    - "reload affected services"
-    - "restart affected services"
+    - "Reload affected services"
+    - "Restart affected services"
+  mode: '0640'
 
-- name: create the pem chain file
+- name: Create the pem chain file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
     content: |
-      {% for elem in  __deployssl_chain_content %}{{ elem }}
+      {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
-    backup: True
+    backup: true
+    mode: '0644'
   vars:
-    __chain_file_name: "{{ (deployssl_pem_cert_trgt| basename| split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
+    __chain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
   when:
     - deployssl_split_fullchain
     - __deployssl_chain_content| length > 0
   notify:
-    - "reload affected services"
-    - "restart affected services"
+    - "Reload affected services"
+    - "Restart affected services"
 
-- name: create the fullchain file
+- name: Create the fullchain file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
     content: |
       {{ __deployssl_cert_content_unsafe }}
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
-    backup: True
+    backup: true
+    mode: '0644'
   vars:
     __fullchain_file_name: "{{ (deployssl_pem_cert_trgt| basename| split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
   when:
@@ -83,5 +87,5 @@
     - __deployssl_chain_content|length > 0
     - __deployssl_cert_content|length == 1
   notify:
-    - "reload affected services"
-    - "restart affected services"
+    - "Reload affected services"
+    - "Restart affected services"

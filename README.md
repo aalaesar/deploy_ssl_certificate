@@ -42,14 +42,14 @@ deployssl_pem_pkey_trgt: /etc/ssl/private/pkey.pem
 
 The following 2 booleans change how the role manage the pem chain along the main cert
 ```yaml
-deployssl_split_fullchain: True
-deployssl_create_fullchain: False
+deployssl_split_fullchain: true
+deployssl_create_fullchain: false
 ```
 
-If you set `deployssl_split_fullchain` as __True__,
+If you set `deployssl_split_fullchain` as __true__,
 the target pem file will contains only the main cert and a file with the `_chain` suffix will be created __only__ if a pem chain was provided.
 
-If you set `deployssl_create_fullchain` as __True__,
+If you set `deployssl_create_fullchain` as __true__,
 a new file with the `_fullchain` suffix will be created __only__ if `deployssl_pem_cert_src` contains __1__ cert __and__ a pem chain was provided.
 This `_fullchain` file will contains all the certs provided, while the target file will only contain the main cert.
 
@@ -69,7 +69,7 @@ deployssl_restart_svc: []
 If the target pem file has to be replaced,
 the role will check that the new cert cover at least the same list of served subjects.
 
-In case you want to skip this check, set `deployssl_force_deploy` to `True`
+In case you want to skip this check, set `deployssl_force_deploy` to `true`
 
 
 
@@ -101,7 +101,7 @@ and create the full pem chain file.
           -----END CERTIFICATE-----
         deployssl_pem_cert_trgt: /etc/apache2/ssl/mydomain.com.pem
         deployssl_pem_pkey_trgt: /etc/apache2/ssl/mydomain.com.pkey.pem
-        deployssl_create_fullchain: True
+        deployssl_create_fullchain: true
         deployssl_reload_svc:
           - apache2
 ```
