@@ -26,7 +26,7 @@
       register: __current_cert
     - name: The replacement certificate should have at least the same subject(s)
       ansible.builtin.assert:
-        that:
+        that:  # noqa jinja[invalid]
           - not __certs_subject_difference
         fail_msg: "New cert will NOT serve for the following domains: {{ __certs_subject_difference| join(',') }}"
       vars:
@@ -81,11 +81,11 @@
     backup: true
     mode: '0644'
   vars:
-    __fullchain_file_name: "{{ (deployssl_pem_cert_trgt| basename| split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
+    __fullchain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
   when:
     - deployssl_create_fullchain
-    - __deployssl_chain_content|length > 0
-    - __deployssl_cert_content|length == 1
+    - __deployssl_chain_content | length > 0
+    - __deployssl_cert_content | length == 1
   notify:
     - "Reload affected services"
     - "Restart affected services"

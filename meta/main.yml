@@ -1,12 +1,14 @@
 galaxy_info:
   role_name: deploy_ssl_certificate
+  description: "A simple role to deploy or replace ONE ssl certificate in the PEM format."
   namespace: aalaesar
   author: Marc Crébassa
   license: BSD-3-Clause
-  min_ansible_version: 2.1
+  min_ansible_version: "2.15"
   galaxy_tags:
-    - certificat
     - ssl
+    - tls
+    - certificate
     - pem
     - letsencrypt
 dependencies: []
