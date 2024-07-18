@@ -4,7 +4,7 @@ galaxy_info:
   namespace: aalaesar
   author: Marc Crébassa
   license: BSD-3-Clause
-  min_ansible_version: "2.15"
+  min_ansible_version: "2.10"
   galaxy_tags:
     - ssl
     - tls
