@@ -42,7 +42,7 @@
 - name: Copy over the pem file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_cert_trgt }}"
-    content: "{{ deployssl_split_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
+    content: "{{ deployssl_split_fullchain or deployssl_create_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
     backup: true
     mode: "{{ __current_cert_stat.stat.exists | defaults('0644') }}"
   notify:
@@ -93,7 +93,6 @@
   when:
     - deployssl_create_fullchain
     - __deployssl_chain_content | length > 0
-    - __deployssl_cert_content | length == 1
   notify:
     - "Reload affected services"
     - "Restart affected services"

@@ -55,7 +55,7 @@ If you set `deployssl_split_fullchain` as __true__,
 the target pem file will contains only the main cert and a file with the `_chain` suffix will be created __only__ if a pem chain was provided.
 
 If you set `deployssl_create_fullchain` as __true__,
-a new file with the `_fullchain` suffix will be created __only__ if `deployssl_pem_cert_src` contains __1__ cert __and__ a pem chain was provided.
+a new file with the `_fullchain` suffix will be created __only__ if a pem chain was provided.
 This `_fullchain` file will contains all the certs provided, while the target file will only contain the main cert.
 
 If you do not want chain and fullchain files to be name based on the target cert file name, you can override them with:
