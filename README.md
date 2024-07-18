@@ -118,6 +118,24 @@ and create the full pem chain file.
           - apache2
 ```
 
+deploy a cert created with the local certbot client to remote hosts, remotely mimicking certbot folder structure.
+( remote targets are symlinks targets for the "live" folder )
+```yaml
+- hosts: servers
+  roles:
+    - role: aalaesar.deploy-ssl-certificate
+      deployssl_pem_type: file
+      deployssl_pem_cert_src: /etc/letsencrypt/live/mydomain.com/fullchain.pem
+      deployssl_pem_pkey_src: /etc/letsencrypt/live/mydomain.com/privkey.pem
+      deployssl_pem_cert_trgt: "/etc/letsencrypt/archive/mydomain.com/cert7.pem"
+      deployssl_pem_pkey_trgt: "/etc/letsencrypt/archive/mydomain.com/privkey7.pem"
+      deployssl_create_fullchain: true
+      deployssl_chain_file_name: "chain7.pem"
+      deployssl_fullchain_file_name: "fullchain7.pem"
+      deployssl_reload_svc:
+        - apache2
+```
+
 License
 -------
 
