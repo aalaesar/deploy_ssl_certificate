@@ -62,7 +62,8 @@
 
 - name: Create the pem chain file
   ansible.builtin.copy:
-    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
+    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ (deployssl_chain_file_name | length > 0) |
+      ternary(deployssl_chain_file_name, __chain_file_name) }}"
     content: |
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
@@ -79,9 +80,10 @@
 
 - name: Create the fullchain file
   ansible.builtin.copy:
-    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ __chain_file_name }}"
+    dest: "{{ deployssl_pem_cert_trgt | dirname }}/{{ (deployssl_fullchain_file_name | length > 0) |
+      ternary(deployssl_fullchain_file_name, __fullchain_file_name) }}"
     content: |
-      {{ __deployssl_cert_content_unsafe }}
+      {{ __deployssl_cert_content[0] }}
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
     backup: true

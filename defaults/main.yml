@@ -16,6 +16,8 @@ deployssl_split_fullchain: true
 # NOTE: chain and fullchain pem files will go in the same folder as the cert
 deployssl_pem_cert_trgt: /etc/ssl/certs/cert.pem
 deployssl_pem_pkey_trgt: /etc/ssl/private/pkey.pem
+deployssl_chain_file_name: ""
+deployssl_fullchain_file_name: ""
 
 # services that should reload or restart
 # once the certificate have been installed

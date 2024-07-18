@@ -58,9 +58,16 @@ If you set `deployssl_create_fullchain` as __true__,
 a new file with the `_fullchain` suffix will be created __only__ if `deployssl_pem_cert_src` contains __1__ cert __and__ a pem chain was provided.
 This `_fullchain` file will contains all the certs provided, while the target file will only contain the main cert.
 
+If you do not want chain and fullchain files to be name based on the target cert file name, you can override them with:
+
+```yaml
+deployssl_chain_file_name: ""
+deployssl_fullchain_file_name: ""
+```
+
 _NOTE: both `chain` and `fullchain` pem files will go in the __same folder__ as the cert._
 
-### Updating the aplications using the cert
+### Updating the applications consuming the cert
 
 The role can trigger some services reload or restart if it changed any file.
 Specify the service(s) name(s) in the list depending on the action to take.
