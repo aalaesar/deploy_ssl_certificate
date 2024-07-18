@@ -1,7 +1,12 @@
 Deploy SSL certificate
 =========
 
-A simple role to deploy or replace ONE ssl certificate in the PEM format to a server in some folder location. It can reload/restart dependant services.
+> In this file, the words `cert`, `pem` and `certificate`are used interchangeably. As well as `pkey` and `private key`.
+
+A simple role to deploy or replace ONE ssl certificate in the PEM format to a server in some folder location.
+It can reload/restart dependant services.
+
+This role has been initialy created to deploy letsEncrypt dns wildcard certificates from the hosts doing cert renewal to hosts using them.
 
 Requirements
 ------------
