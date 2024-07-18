@@ -11,7 +11,10 @@ This role has been initialy created to deploy letsEncrypt dns wildcard certifica
 Requirements
 ------------
 
-community.crypto >= 2.10
+This role rely on community.crypto >= 2.10
+Please install it along this role:
+- by running `ansible-galaxy collection install community.crypto`
+- by using/copying the provided `requirements.yml` in your project
 
 Role Variables
 --------------
