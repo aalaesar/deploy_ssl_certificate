@@ -15,6 +15,12 @@
     follow: true
   register: __current_cert_stat
 
+- name: Get pkey file mode
+  ansible.builtin.stat:
+    path: "{{ deployssl_pem_pkey_trgt }}"
+    follow: true
+  register: __current_pkey_stat
+
 - name: Certificat checks
   when:
     - __current_cert_stat.stat.exists
@@ -38,21 +44,21 @@
     dest: "{{ deployssl_pem_cert_trgt }}"
     content: "{{ deployssl_split_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
     backup: true
+    mode: "{{ __current_cert_stat.stat.exists | defaults('0644') }}"
   notify:
     - "Reload affected services"
     - "Restart affected services"
-  mode: '0644'
 
 - name: Copy over the pkey file
   ansible.builtin.copy:
     dest: "{{ deployssl_pem_pkey_trgt }}"
     content: "{{ __deployssl_pkey_content }}"
     backup: true
-  # no_log: true
+    mode: "{{ __current_pkey_stat.stat.exists | defaults('0640') }}"
+  no_log: true
   notify:
     - "Reload affected services"
     - "Restart affected services"
-  mode: '0640'
 
 - name: Create the pem chain file
   ansible.builtin.copy:
@@ -61,7 +67,7 @@
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
     backup: true
-    mode: '0644'
+    mode: "{{ __current_cert_stat.stat.mode| defaults('0644') }}"
   vars:
     __chain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
   when:
@@ -79,7 +85,7 @@
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
     backup: true
-    mode: '0644'
+    mode: "{{ __current_cert_stat.stat.mode| defaults('0644') }}"
   vars:
     __fullchain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
   when:
