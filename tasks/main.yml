@@ -44,7 +44,7 @@
     dest: "{{ deployssl_pem_cert_trgt }}"
     content: "{{ deployssl_split_fullchain or deployssl_create_fullchain | ternary(__deployssl_cert_content[0], __deployssl_cert_content_unsafe) }}"
     backup: true
-    mode: "{{ __current_cert_stat.stat.exists | defaults('0644') }}"
+    mode: "{{ __current_cert_stat.stat.exists | default('0644') }}"
   notify:
     - "Reload affected services"
     - "Restart affected services"
@@ -54,7 +54,7 @@
     dest: "{{ deployssl_pem_pkey_trgt }}"
     content: "{{ __deployssl_pkey_content }}"
     backup: true
-    mode: "{{ __current_pkey_stat.stat.exists | defaults('0640') }}"
+    mode: "{{ __current_pkey_stat.stat.exists | default('0640') }}"
   no_log: true
   notify:
     - "Reload affected services"
@@ -68,7 +68,7 @@
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
     backup: true
-    mode: "{{ __current_cert_stat.stat.mode| defaults('0644') }}"
+    mode: "{{ __current_cert_stat.stat.mode| default('0644') }}"
   vars:
     __chain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
   when:
@@ -87,7 +87,7 @@
       {% for elem in __deployssl_chain_content %}{{ elem }}
       {% endfor %}
     backup: true
-    mode: "{{ __current_cert_stat.stat.mode| defaults('0644') }}"
+    mode: "{{ __current_cert_stat.stat.mode| default('0644') }}"
   vars:
     __fullchain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-2] }}_fullchain.{{ __deployssl_cert_extension }}"
   when:
