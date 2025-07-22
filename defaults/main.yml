@@ -23,6 +23,7 @@ deployssl_fullchain_file_name: ""
 # once the certificate have been installed
 deployssl_reload_svc: []
 deployssl_restart_svc: []
+deployssl_touch_file: []
 
 # will skip the minimum subject check between the certs
 deployssl_force_deploy: false

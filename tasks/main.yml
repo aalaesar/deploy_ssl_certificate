@@ -59,6 +59,7 @@
   notify:
     - "Reload affected services"
     - "Restart affected services"
+    - "Touch a file"
 
 - name: Create the pem chain file
   ansible.builtin.copy:
@@ -73,10 +74,11 @@
     __chain_file_name: "{{ (deployssl_pem_cert_trgt | basename | split('.'))[:-1] | join('.') }}_chain.{{ __deployssl_cert_extension }}"
   when:
     - deployssl_split_fullchain
-    - __deployssl_chain_content| length > 0
+    - __deployssl_chain_content | length > 0
   notify:
     - "Reload affected services"
     - "Restart affected services"
+    - "Touch a file"
 
 - name: Create the fullchain file
   ansible.builtin.copy:
@@ -96,3 +98,4 @@
   notify:
     - "Reload affected services"
     - "Restart affected services"
+    - "Touch a file"
