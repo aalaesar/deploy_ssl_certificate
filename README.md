@@ -72,11 +72,12 @@ _NOTE: both `chain` and `fullchain` pem files will go in the __same folder__ as 
 
 ### Updating the applications consuming the cert
 
-The role can trigger some services reload or restart if it changed any file.
+The role can trigger some services reload or restart or touch a file to trigger an automated reload if it changed any file.
 Specify the service(s) name(s) in the list depending on the action to take.
 ```yaml
 deployssl_reload_svc: []
 deployssl_restart_svc: []
+deployssl_touch_file: []
 ```
 
 ### Changing the served subjects
