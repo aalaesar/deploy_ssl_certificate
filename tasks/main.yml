@@ -48,6 +48,7 @@
   notify:
     - "Reload affected services"
     - "Restart affected services"
+    - "Touch a file"
 
 - name: Copy over the pkey file
   ansible.builtin.copy:
